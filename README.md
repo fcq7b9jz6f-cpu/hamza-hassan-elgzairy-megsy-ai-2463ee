@@ -8,7 +8,6 @@
 
 ### الملفات
 - `/main.jsx`
-- `/styles/tokens.css`
 - `/styles.css`
 - `/pages/Home.jsx`
 - `/lib/supabase.js`
@@ -32,6 +31,9 @@
 - `/pages/Projects.jsx`
 - `/components/Footer.jsx`
 - `/pages/Account.jsx`
+- `/styles/tokens.css`
+- `/lib/cart.js`
+- `/components/AIChat.jsx`
 
 ### النشر
 - البناء: ملفات HTML/JS ثابتة
