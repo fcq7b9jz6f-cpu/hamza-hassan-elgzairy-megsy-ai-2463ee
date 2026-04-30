@@ -1,180 +1,87 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ui } from "../lib/theme";
-import { User, LogIn, Mail, Lock, CheckCircle, ShieldAlert, ArrowRight, Github } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from 'react';
+import { Mail, Lock, Sparkles, ArrowLeft, Github, Chrome } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ui } from '../lib/theme';
 
 export default function Auth() {
-  const nav = useNavigate();
-  const [mode, setMode] = useState("signin"); // signin | signup | reset
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState({ type: "", text: "" });
-
-  useEffect(() => {
-    window.supabase?.auth?.getSession?.().then(({ data: { session } }) => {
-      if (session) nav("/account", { replace: true });
-    });
-  }, [nav]);
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setMsg({ type: "", text: "" });
-
-    try {
-      if (mode === "signup") {
-        const { error } = await window.supabase.auth.signUp({ 
-          email, 
-          password, 
-          options: { emailRedirectTo: window.location.origin } 
-        });
-        if (error) throw error;
-        setMsg({ type: "success", text: "تم! تحقق من بريدك لتفعيل الحساب." });
-      } else if (mode === "signin") {
-        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        nav("/account");
-      } else {
-        const { error } = await window.supabase.auth.resetPasswordForEmail(email, { 
-          redirectTo: window.location.origin + "/reset-password" 
-        });
-        if (error) throw error;
-        setMsg({ type: "success", text: "أرسلنا رابط الاستعادة لبريدك." });
-      }
-    } catch (err) {
-      setMsg({ type: "error", text: err.message });
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [isLogin, setIsLogin] = React.useState(true);
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
-      {/* Visual Side */}
-      <div className="hidden lg:flex flex-col justify-center p-20 bg-gradient-to-br from-violet-950 to-black border-r border-white/5 relative overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-fuchsia-600/10 blur-[120px] rounded-full" />
-        <div className="relative z-10">
-          <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
-            <User className="w-8 h-8 text-violet-400" />
-          </div>
-          <h2 className="text-6xl font-black mb-6 uppercase leading-tight tracking-tighter">
-            انضم إلى <br />
-            <span className={ui.gradientText}>مجتمع الـ AI</span>
-          </h2>
-          <p className="text-xl text-white/50 leading-relaxed max-w-md">
-            سجل دخولك الآن للوصول إلى منتجاتك الرقمية وحفظ تقدمك في دوراتنا التعليمية.
-          </p>
-          
-          <div className="mt-20 space-y-6">
-             <div className="flex items-center gap-4 text-white/40 font-bold uppercase tracking-widest text-xs">
-                <div className="h-px w-10 bg-white/10" /> مميزات الحساب
-             </div>
-             {["وصول مدى الحياة للمنتجات", "تواصل مباشر مع حمزة", "تحديثات حصرية للأعضاء"].map((f, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-400" />
-                  <span className="font-bold text-white/70">{f}</span>
-                </div>
-             ))}
-          </div>
+    <div className="min-h-screen pt-32 pb-20 px-4 relative flex items-center justify-center">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-violet-600/10 via-transparent to-transparent"></div>
+      
+      <div className={ui.card + " max-w-lg w-full p-8 md:p-12 relative overflow-hidden"}>
+        <div className="absolute top-0 right-0 p-8 opacity-5">
+            <Lock size={150} />
         </div>
-      </div>
+        
+        <div className="text-center mb-10 relative">
+          <div className="inline-flex w-16 h-16 bg-violet-600/20 rounded-2xl items-center justify-center text-violet-400 mb-6">
+            <Sparkles size={32} />
+          </div>
+          <h2 className="text-3xl font-black mb-3">{isLogin ? 'مرحباً بعودتك' : 'انضم لعالم Megsy'}</h2>
+          <p className="text-white/40">{isLogin ? 'أكمل رحلتك في تعلم الذكاء الاصطناعي اليوم' : 'أنشئ حساباً مجانياً وابدأ استثمارك في المستقبل'}</p>
+        </div>
 
-      {/* Form Side */}
-      <div className="flex flex-col justify-center items-center px-6 py-20 relative">
-        <div className="w-full max-w-md">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-             <h1 className="text-4xl font-black mb-4 tracking-tight uppercase">
-                {mode === "signin" ? "مرحباً بعودتك" : mode === "signup" ? "إنشاء حساب" : "استعادة الرقم"}
-             </h1>
-             <p className="text-white/40 font-bold">يرجى إدخال تفاصيل حسابك أدناه</p>
-          </motion.div>
-
-          {/* Mode Switcher */}
-          <div className="flex gap-2 p-1.5 rounded-2xl bg-white/5 border border-white/5 mb-8">
-            {["signin", "signup"].map((m) => (
-              <button 
-                key={m} 
-                onClick={() => setMode(m)}
-                className={`flex-1 py-3 rounded-xl text-sm font-black transition-all ${mode === m ? "bg-white text-black shadow-lg" : "text-white/40 hover:text-white"}`}
-              >
-                {m === "signin" ? "تسجيل دخول" : "حساب جديد"}
-              </button>
-            ))}
+        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          {!isLogin && (
+            <div className="space-y-2">
+                <label className="text-sm font-bold text-white/70 block px-1">الاسم الكامل</label>
+                <div className="relative">
+                    <input type="text" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 focus:outline-none focus:border-violet-500/50 transition-all" placeholder="حمزة الجزايري" />
+                </div>
+            </div>
+          )}
+          
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-white/70 block px-1">البريد الإلكتروني</label>
+            <div className="relative">
+              <input type="email" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 focus:outline-none focus:border-violet-500/50 transition-all" placeholder="name@email.com" />
+              <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative group">
-              <Mail className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-violet-500 transition-colors" />
-              <input 
-                type="email" 
-                required 
-                value={email} 
-                onChange={e => setEmail(e.target.value)} 
-                placeholder="البريد الإلكتروني" 
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pr-12 pl-4 outline-none focus:border-violet-500 focus:bg-white/[0.08] transition-all font-bold text-sm"
-              />
+          <div className="space-y-2">
+            <div className="flex justify-between px-1">
+                <label className="text-sm font-bold text-white/70 block">كلمة المرور</label>
+                {isLogin && <button className="text-xs text-violet-400 hover:underline">نسيت كلمة المرور؟</button>}
             </div>
-            
-            {mode !== "reset" && (
-              <div className="relative group">
-                <Lock className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-fuchsia-500 transition-colors" />
-                <input 
-                  type="password" 
-                  required 
-                  minLength={6} 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)} 
-                  placeholder="كلمة المرور" 
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pr-12 pl-4 outline-none focus:border-fuchsia-500 focus:bg-white/[0.08] transition-all font-bold text-sm"
-                />
-              </div>
-            )}
+            <div className="relative">
+              <input type="password" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 focus:outline-none focus:border-violet-500/50 transition-all" placeholder="••••••••" />
+              <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+            </div>
+          </div>
 
-            {mode === "signin" && (
-              <div className="text-left">
-                <button type="button" onClick={() => setMode("reset")} className="text-xs font-bold text-violet-400 hover:text-white transition">نسيت كلمة المرور؟</button>
-              </div>
-            )}
+          <button className={ui.btnPrimary + " w-full py-4 text-lg mt-4 shadow-violet-500/40"}>
+            {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
+          </button>
 
-            <button 
-              disabled={loading} 
-              className="w-full py-5 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 font-black text-xl hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition-all disabled:opacity-50 active:scale-95 mt-4"
-            >
-              {loading ? "جاري المعالجة..." : mode === "signin" ? "دخول" : mode === "signup" ? "ابدأ الآن" : "إرسال رابط الاستعادة"}
-            </button>
-          </form>
+          <div className="relative flex items-center justify-center py-4">
+             <div className="absolute w-full h-[1px] bg-white/10"></div>
+             <span className="bg-zinc-950 px-4 text-xs text-white/30 uppercase tracking-widest relative">أو عبر</span>
+          </div>
 
-          <AnimatePresence>
-            {msg.text && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                className={`mt-6 p-4 rounded-xl flex items-center gap-3 border ${msg.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-red-500/10 border-red-500/20 text-red-400"}`}
-              >
-                {msg.type === "success" ? <CheckCircle className="w-5 h-5 shrink-0" /> : <ShieldAlert className="w-5 h-5 shrink-0" />}
-                <span className="text-sm font-bold">{msg.text}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          
-          <div className="mt-12 pt-8 border-t border-white/5">
-             <div className="flex items-center gap-4 mb-6">
-                <div className="h-px flex-1 bg-white/10" />
-                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">أو بواسطة</span>
-                <div className="h-px flex-1 bg-white/10" />
-             </div>
-             <button className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center gap-3 text-sm font-bold hover:bg-white hover:text-black transition-all">
-                <Github className="w-5 h-5" /> متابعة بواسطة GitHub
+          <div className="grid grid-cols-2 gap-4">
+             <button className={ui.btnGhost + " py-3 px-4 border-white/5"}>
+                <Chrome size={18} />
+                Google
+             </button>
+             <button className={ui.btnGhost + " py-3 px-4 border-white/5"}>
+                <Github size={18} />
+                GitHub
              </button>
           </div>
-        </div>
+        </form>
+
+        <p className="text-center mt-10 text-white/40">
+          {isLogin ? 'ليس لديك حساب؟' : 'لديك حساب بالفعل؟'}
+          <button 
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-violet-400 font-bold mr-2 hover:underline"
+          >
+            {isLogin ? 'سجل الآن' : 'ادخل لحسابك'}
+          </button>
+        </p>
       </div>
     </div>
   );

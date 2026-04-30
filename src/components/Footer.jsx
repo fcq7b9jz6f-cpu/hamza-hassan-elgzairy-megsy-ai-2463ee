@@ -1,79 +1,52 @@
-import { ui } from "../lib/theme";
+import React from "react";
 import { Link } from "react-router-dom";
-import { Terminal, Github, Twitter, Linkedin, Heart } from "lucide-react";
+import { Github, Linkedin, Twitter, Mail, ExternalLink } from "lucide-react";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-black border-t border-white/5 pt-20 pb-10 overflow-hidden relative">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
-      
-      <div className={ui.container}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20 px-4">
-          <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-lg transform group-hover:rotate-6 transition-transform">
-                <Terminal className="w-7 h-7 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight leading-none uppercase">HAMZA</span>
-                <span className="text-[10px] text-fuchsia-400 font-bold tracking-widest uppercase">AI ENGINEER</span>
-              </div>
+    <footer className="bg-zinc-950 border-t border-white/5 pt-20 pb-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div className="md:col-span-2">
+            <Link to="/" className="text-2xl font-black text-white mb-6 block">
+              HAMZA <span className="text-violet-500">HASSAN</span>
             </Link>
-            <p className="text-white/40 font-medium leading-relaxed max-w-xs">
-              نبني جسوراً من الأكواد والذكاء الاصطناعي لنصل بمشاريعكم إلى آفاق غير مسبوقة. انطلق معنا في رحلة الابتكار.
+            <p className="text-white/50 max-w-sm mb-8 leading-relaxed">
+              مهندس ذكاء اصطناعي في Megsy AI، مختص ببناء الأنظمة الذكية التي تغير طريقة تفاعلنا مع العالم الرقمي.
             </p>
             <div className="flex gap-4">
-              {[Github, Twitter, Linkedin].map((Icon, i) => (
-                <Link key={i} to="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition">
+              {[Github, Linkedin, Twitter].map((Icon, i) => (
+                <a key={i} href="#" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-violet-600 hover:text-white transition-all text-white/60 group">
                   <Icon className="w-5 h-5" />
-                </Link>
+                </a>
               ))}
             </div>
           </div>
-
+          
           <div>
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-white">الملاحة</h4>
-            <ul className="space-y-4">
-              {["الرئيسية", "المتجر الرقمي", "المشاريع", "دعم العملاء"].map((link, idx) => (
-                <li key={idx}>
-                  <Link to="#" className="text-white/40 hover:text-violet-400 transition font-bold">{link}</Link>
-                </li>
-              ))}
+            <h4 className="text-white font-bold mb-6">الروابط</h4>
+            <ul className="space-y-4 text-white/40">
+              <li><Link to="/store" className="hover:text-violet-400 transition-colors">المتجر الرقمي</Link></li>
+              <li><Link to="/projects" className="hover:text-violet-400 transition-colors">معرض الأعمال</Link></li>
+              <li><Link to="/about" className="hover:text-violet-400 transition-colors">عن حمزة</Link></li>
+              <li><Link to="/support" className="hover:text-violet-400 transition-colors">الدعم التقني</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-white">الأدوات</h4>
-            <ul className="space-y-4">
-              {["Megsy AI", "Prompt Engineering", "Custom LLMs", "Automation"].map((tool, idx) => (
-                <li key={idx}>
-                  <Link to="#" className="text-white/40 hover:text-fuchsia-400 transition font-bold">{tool}</Link>
-                </li>
-              ))}
+            <h4 className="text-white font-bold mb-6">قانوني</h4>
+            <ul className="space-y-4 text-white/40">
+              <li><a href="#" className="hover:text-violet-400 transition-colors">سياسة الخصوصية</a></li>
+              <li><a href="#" className="hover:text-violet-400 transition-colors">شروط الاستخدام</a></li>
+              <li><a href="#" className="hover:text-violet-400 transition-colors">سياسة الاسترجاع</a></li>
             </ul>
-          </div>
-
-          <div className="p-8 rounded-3xl bg-zinc-900/50 border border-white/5 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-150 transition-transform duration-700">
-               <Terminal className="w-20 h-20" />
-            </div>
-            <h4 className="text-lg font-black mb-4">اشترك في النشرة</h4>
-            <p className="text-xs text-white/40 mb-6 font-bold leading-relaxed">احصل على آخر التحديثات في عالم الذكاء الاصطناعي أسبوعياً.</p>
-            <div className="flex gap-2">
-              <input type="email" placeholder="بريدك.." className="flex-1 bg-black border border-white/10 rounded-xl px-4 text-xs outline-none focus:border-violet-500" />
-              <button className="px-4 py-3 rounded-xl bg-white text-black text-xs font-black">انضم</button>
-            </div>
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
-          <div className="text-[10px] sm:text-xs font-black text-white/30 uppercase tracking-[0.3em]">
-            © {currentYear} HAMZA HASSAN ELGZAIRY — ALL RIGHTS RESERVED
-          </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-white/40">
-            صنع بـ <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> في <span className="text-white">MEGSY AI</span>
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-white/30 text-sm">
+          <p>© 2024 حمزة الجزايري. جميع الحقوق محفوظة لـ Megsy AI.</p>
+          <div className="flex items-center gap-2">
+            تم التطوير بواسطة <span className="text-white">حمزة</span> باستخدام <span className="text-white">Megsy AI</span>
           </div>
         </div>
       </div>

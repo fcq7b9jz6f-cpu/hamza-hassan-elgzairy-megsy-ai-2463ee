@@ -1,22 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Frown } from 'lucide-react';
 import { ui } from '../lib/theme';
+import { ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const NotFound = () => {
+export default function NotFound() {
   return (
-    <div className={`${ui.section} ${ui.container} text-center flex flex-col items-center justify-center min-h-[60vh]`}>
-        <Frown className="w-24 h-24 text-violet-400 mb-6" />
-      <h1 className={`${ui.h1} ${ui.gradientText} mb-4`}>404</h1>
-      <h2 className="text-3xl font-bold mb-4">Page Not Found</h2>
-      <p className="text-text-muted text-lg mb-8 max-w-md">
-        Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
-      </p>
-      <Link to="/" className={ui.btnPrimary}>
-        Go Back Home
-      </Link>
+    <div className="min-h-screen flex items-center justify-center text-center px-4 bg-black">
+      <div className="relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-violet-600/20 blur-[100px] rounded-full -z-10" />
+        <h1 className="text-[150px] font-black leading-none bg-gradient-to-b from-white/20 to-transparent bg-clip-text text-transparent mb-8">
+          404
+        </h1>
+        <h2 className="text-4xl font-bold mb-6 italic">الصفحة مفقودة في الفضاء الرقمي</h2>
+        <p className="text-white/50 mb-10 max-w-md mx-auto">
+          يبدو أنك حاولت الوصول لعنوان غير موجود أو تم نقله. لا تقلق، ذكاؤنا الاصطناعي وجد لك طريقاً للعودة.
+        </p>
+        <Link to="/" className={ui.btnPrimary + " mx-auto"}>
+          العودة للرئيسية
+          <ArrowLeft size={20} />
+        </Link>
+      </div>
     </div>
   );
-};
-
-export default NotFound;
+}

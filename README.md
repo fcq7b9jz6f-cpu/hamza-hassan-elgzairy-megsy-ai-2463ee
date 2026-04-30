@@ -8,7 +8,6 @@
 
 ### الملفات
 - `/main.jsx`
-- `/styles.css`
 - `/pages/Home.jsx`
 - `/lib/supabase.js`
 - `/pages/NotFound.jsx`
@@ -26,14 +25,15 @@
 - `/App.jsx`
 - `/components/Navbar.jsx`
 - `/pages/Support.jsx`
-- `/pages/Cart.jsx`
-- `/pages/Auth.jsx`
 - `/pages/Projects.jsx`
 - `/components/Footer.jsx`
 - `/pages/Account.jsx`
 - `/styles/tokens.css`
 - `/lib/cart.js`
 - `/components/AIChat.jsx`
+- `/styles.css`
+- `/pages/Auth.jsx`
+- `/pages/Cart.jsx`
 
 ### النشر
 - البناء: ملفات HTML/JS ثابتة

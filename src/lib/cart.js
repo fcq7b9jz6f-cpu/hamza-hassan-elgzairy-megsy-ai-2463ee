@@ -1,20 +1,46 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-export const useCart = create(persist((set, get) => ({
-  items: [],
-  add: (p, qty = 1) => set(s => {
-    const ex = s.items.find(i => i.id === p.id);
-    if (ex) {
-      return { items: s.items.map(i => i.id === p.id ? { ...i, qty: i.qty + qty } : i) };
+export const useCart = create(
+  persist(
+    (set, get) => ({
+      items: [],
+      addItem: (product) => {
+        const currentItems = get().items;
+        const existingItem = currentItems.find((item) => item.id === product.id);
+
+        if (existingItem) {
+          set({
+            items: currentItems.map((item) =>
+              item.id === product.id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            ),
+          });
+        } else {
+          set({ items: [...currentItems, { ...product, quantity: 1 }] });
+        }
+      },
+      removeItem: (id) => {
+        set({ items: get().items.filter((item) => item.id !== id) });
+      },
+      updateQuantity: (id, quantity) => {
+        if (quantity < 1) {
+          get().removeItem(id);
+          return;
+        }
+        set({
+          items: get().items.map((item) =>
+            item.id === id ? { ...item, quantity } : item
+          ),
+        });
+      },
+      clearCart: () => set({ items: [] }),
+      total: () =>
+        get().items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    }),
+    {
+      name: 'cart-storage',
     }
-    return { items: [...s.items, { ...p, qty }] };
-  }),
-  remove: (id) => set(s => ({ items: s.items.filter(i => i.id !== id) })),
-  update: (id, qty) => set(s => ({
-    items: qty <= 0 ? s.items.filter(i => i.id !== id) : s.items.map(i => i.id === id ? { ...i, qty } : i)
-  })),
-  clear: () => set({ items: [] }),
-  total: () => get().items.reduce((sum, i) => sum + i.price * i.qty, 0),
-  count: () => get().items.reduce((sum, i) => sum + i.qty, 0),
-}), { name: "hamza-cart-v1" }));
+  )
+);
