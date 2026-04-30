@@ -1,0 +1,63 @@
+
+[
+  {
+    "name_ar": "مجموعة أدوات مطور الذكاء الاصطناعي الكامل",
+    "name_en": "The Ultimate AI Developer Toolkit",
+    "description_ar": "ترسانة كاملة للمطورين الجادين. تتضمن نماذج مسبقة التدريب، وأدوات MLOps، ومكونات واجهة مستخدم متقدمة للتكامل السريع.",
+    "description_en": "A complete arsenal for the serious AI developer. Includes pre-trained models, MLOps tools, and advanced UI components for rapid integration.",
+    "price": 249.00,
+    "category": "Toolkits",
+    "image_url": "https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "file_url": "/downloads/ultimate-ai-toolkit.zip"
+  },
+  {
+    "name_ar": "دورة احتراف GPT-4 Vision",
+    "name_en": "Mastering GPT-4 Vision Course",
+    "description_ar": "دورة شاملة تأخذك من الأساسيات إلى التقنيات المتقدمة في استخدام نماذج الرؤية متعددة الوسائط مثل GPT-4V. مشاريع عملية واقعية.",
+    "description_en": "A comprehensive course taking you from the basics to advanced techniques in utilizing multi-modal vision models like GPT-4V. Real-world, hands-on projects.",
+    "price": 179.00,
+    "category": "Courses",
+    "image_url": "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "file_url": "/downloads/gpt4-vision-course.zip"
+  },
+  {
+    "name_ar": "حزمة أوامر Midjourney (خيال علمي)",
+    "name_en": "Sci-Fi Midjourney Prompt Pack",
+    "description_ar": "أكثر من 500 أمر Midjourney مصممة بدقة لإنشاء فنون خيال علمي مبهرة. مثالية للمفاهيم الفنية، وتصميم العوالم، والنماذج الأولية للألعاب.",
+    "description_en": "Over 500 meticulously crafted Midjourney prompts for generating breathtaking sci-fi art. Perfect for concept art, world-building, and game prototyping.",
+    "price": 49.00,
+    "category": "Prompt Packs",
+    "image_url": "https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "file_url": "/downloads/scifi-midjourney-prompts.zip"
+  },
+  {
+    "name_ar": "قالب Next.js لتطبيقات SaaS المستندة إلى AI",
+    "name_en": "AI SaaS Next.js Boilerplate",
+    "description_ar": "وفّر مئات الساعات من التطوير. قالب إنتاجي جاهز مع تكامل Supabase، ومصادقة، واشتراكات Stripe، وصفحات هبوط.",
+    "description_en": "Save hundreds of development hours. A production-ready boilerplate with Supabase integration, authentication, Stripe subscriptions, and landing pages.",
+    "price": 199.00,
+    "category": "Templates",
+    "image_url": "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "file_url": "/downloads/nextjs-saas-boilerplate.zip"
+  },
+  {
+    "name_ar": "حزمة أوامر LLM لخدمة العملاء",
+    "name_en": "Customer Service LLM Prompt Pack",
+    "description_ar": "حسّن روبوتات الدردشة الخاصة بك مع هذه المجموعة من الأوامر المتخصصة لسيناريوهات خدمة العملاء، بما في ذلك حل المشكلات، وترقية المبيعات، والتعاطف.",
+    "description_en": "Supercharge your chatbots with this collection of specialized prompts for customer service scenarios, including problem resolution, upselling, and empathy.",
+    "price": 79.00,
+    "category": "Prompt Packs",
+    "image_url": "https://images.pexels.com/photos/8721343/pexels-photo-8721343.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "file_url": "/downloads/customer-service-prompts.zip"
+  },
+  {
+    "name_ar": "ورشة عمل هندسة الأوامر المتقدمة",
+    "name_en": "Advanced Prompt Engineering Workshop",
+    "description_ar": "تسجيل لورشة عمل حصرية مدتها 3 ساعات تغطي تقنيات متطورة مثل Chain-of-Thought، وSelf-Correction، وTree of Thoughts لاستخراج أقصى أداء من LLMs.",
+    "description_en": "A recording of an exclusive 3-hour workshop covering cutting-edge techniques like Chain-of-Thought, Self-Correction, and Tree of Thoughts to extract maximum performance from LLMs.",
+    "price": 129.00,
+    "category": "Courses",
+    "image_url": "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "file_url": "/downloads/advanced-prompt-workshop.zip"
+  }
+]

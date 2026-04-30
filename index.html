@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hamza Hassan Elgzairy - Megsy AI</title>
+<meta name="description" content="Hamza Hassan Elgzairy - Megsy AI — موقع منشور بواسطة Webly" />
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: { extend: { fontFamily: { sans: ['Cairo', 'Inter', 'system-ui', 'sans-serif'] } } }
+  };
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body, #root { margin: 0; min-height: 100%; }
+  body { font-family: 'Cairo', 'Inter', system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; background: #0f172a; color: #f8fafc; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+    "react/jsx-dev-runtime": "https://esm.sh/react@18.3.1/jsx-dev-runtime",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.26.2?deps=react@18.3.1,react-dom@18.3.1",
+    "lucide-react": "https://esm.sh/lucide-react@0.468.0?deps=react@18.3.1",
+    "framer-motion": "https://esm.sh/framer-motion@11.11.17?deps=react@18.3.1,react-dom@18.3.1",
+    "clsx": "https://esm.sh/clsx@2.1.1",
+    "zustand": "https://esm.sh/zustand@5.0.1?deps=react@18.3.1",
+    "zustand/": "https://esm.sh/zustand@5.0.1/",
+    "recharts": "https://esm.sh/recharts@2.13.3?deps=react@18.3.1,react-dom@18.3.1",
+    "date-fns": "https://esm.sh/date-fns@4.1.0",
+    "nanoid": "https://esm.sh/nanoid@5.0.9"
+  }
+}
+</script>
+<script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+  // ───── Report runtime errors to parent (Webly editor) ─────
+  (function(){
+    function send(payload){ try { parent.postMessage({ __webly_runtime__: true, ...payload }, '*'); } catch(_){} }
+    window.addEventListener('error', function(e){
+      send({ kind: 'error', message: e.message || String(e.error || 'error'), source: e.filename, line: e.lineno, col: e.colno, stack: e.error && e.error.stack });
+    });
+    window.addEventListener('unhandledrejection', function(e){
+      var r = e.reason;
+      send({ kind: 'unhandledrejection', message: (r && (r.message || String(r))) || 'unhandled rejection', stack: r && r.stack });
+    });
+    var origErr = console.error;
+    console.error = function(){
+      try { send({ kind: 'console_error', message: Array.from(arguments).map(function(a){ return typeof a==='string'?a:(a&&a.message)||JSON.stringify(a); }).join(' ') }); } catch(_){}
+      origErr.apply(console, arguments);
+    };
+  })();
+</script>
+<script>
+  // ───── Webly runtime config ─────
+  window.__WEBLY__ = {
+    projectId: "2463eea0-1db0-4c62-bdf3-3d70b1da362d",
+    apiBase: "https://wxphtsgezburjqoqiqqo.supabase.co/functions/v1/webly-app-api/2463eea0-1db0-4c62-bdf3-3d70b1da362d",
+    proxyBase: "https://wxphtsgezburjqoqiqqo.supabase.co/functions/v1/webly-proxy/2463eea0-1db0-4c62-bdf3-3d70b1da362d",
+  };
+  window.__SUPABASE_CONFIG__ = null;
+
+  // ───── Session id for app data ownership ─────
+  if (!localStorage.getItem('webly_session')) {
+    localStorage.setItem('webly_session', 'sess_' + Math.random().toString(36).slice(2) + Date.now().toString(36));
+  }
+  const _sess = localStorage.getItem('webly_session');
+
+  // ───── Single fetch interceptor: rewrite /api/data/* and /api/proxy/* ─────
+  (function(){
+    const origFetch = window.fetch.bind(window);
+    function aliasField(obj, target, sources){
+      if (!obj || typeof obj !== 'object') return;
+      if (obj[target] != null) return;
+      for (const s of sources) { if (obj[s] != null) { obj[target] = obj[s]; return; } }
+    }
+    function normalizeRecord(r){
+      if (!r || typeof r !== 'object') return r;
+      // Cross-name aliases so AI-generated apps don't crash on missing fields
+      aliasField(r, 'name',        ['title','label','product_name','heading']);
+      aliasField(r, 'title',       ['name','label']);
+      aliasField(r, 'image',       ['image_url','img','imageUrl','photo','picture','thumbnail']);
+      aliasField(r, 'image_url',   ['image','img','imageUrl','photo','picture','thumbnail']);
+      aliasField(r, 'imageUrl',    ['image_url','image']);
+      aliasField(r, 'description', ['desc','details','body','content']);
+      aliasField(r, 'price',       ['cost','amount']);
+      aliasField(r, 'category',    ['type','tag','collection']);
+      return r;
+    }
+    async function maybeNormalize(res){
+      try {
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) return res;
+        const cloned = res.clone();
+        const data = await cloned.json();
+        let next;
+        if (Array.isArray(data)) next = data.map(normalizeRecord);
+        else next = normalizeRecord(data);
+        return new Response(JSON.stringify(next), { status: res.status, statusText: res.statusText, headers: res.headers });
+      } catch(_){ return res; }
+    }
+    window.fetch = function(input, init){
+      try {
+        let url = typeof input === 'string' ? input : (input && input.url) || '';
+        let isApiData = false;
+        let newInput = input;
+        if (typeof url === 'string') {
+          if (url.startsWith('/api/data/')) {
+            const newUrl = window.__WEBLY__.apiBase + '/data' + url.replace(/^\/api\/data/, '');
+            newInput = (typeof input === 'string') ? newUrl : new Request(newUrl, input);
+            isApiData = true;
+          } else if (url.startsWith('/api/proxy/')) {
+            const newUrl = window.__WEBLY__.proxyBase + url.replace(/^\/api\/proxy/, '');
+            newInput = (typeof input === 'string') ? newUrl : new Request(newUrl, input);
+          }
+        }
+        init = init || {};
+        const headers = new Headers(init.headers || (typeof input !== 'string' ? input.headers : undefined));
+        if (!headers.has('x-webly-session')) headers.set('x-webly-session', _sess);
+        init.headers = headers;
+        const p = origFetch(newInput, init);
+        return isApiData ? p.then(maybeNormalize) : p;
+      } catch(_) {
+        return origFetch(input, init);
+      }
+    };
+  })();
+
+  // ───── Built-in Supabase-compatible client (always available) ─────
+  // Generated apps can call window.supabase.from('x').select() with ZERO setup.
+  // - If the user linked their own Supabase project (via "اتصالات"), we use it.
+  // - Otherwise we expose a stub that proxies CRUD to /api/data/<table>.
+  // This guarantees no app ever shows "لم يتم تكوين قاعدة البيانات".
+  (function(){
+    function buildQuery(table){
+      const filters = [];
+      const state = { order: null, limit: null, single: false, range: null };
+      const api = {};
+      function clone(){ return Object.assign({}, api); }
+      api.select = function(){ return clone(); };
+      api.eq      = function(col, val){ filters.push({ op:'eq', col, val }); return clone(); };
+      api.neq     = function(col, val){ filters.push({ op:'neq', col, val }); return clone(); };
+      api.gt      = function(col, val){ filters.push({ op:'gt', col, val }); return clone(); };
+      api.gte     = function(col, val){ filters.push({ op:'gte', col, val }); return clone(); };
+      api.lt      = function(col, val){ filters.push({ op:'lt', col, val }); return clone(); };
+      api.lte     = function(col, val){ filters.push({ op:'lte', col, val }); return clone(); };
+      api.like    = function(col, val){ filters.push({ op:'like', col, val }); return clone(); };
+      api.ilike   = function(col, val){ filters.push({ op:'ilike', col, val }); return clone(); };
+      api['in']   = function(col, vals){ filters.push({ op:'in', col, vals }); return clone(); };
+      api.match   = function(obj){ Object.keys(obj||{}).forEach(function(k){ filters.push({ op:'eq', col:k, val:obj[k] }); }); return clone(); };
+      api.order   = function(col, opts){ state.order = { col: col, asc: !(opts && opts.ascending === false) }; return clone(); };
+      api.limit   = function(n){ state.limit = n; return clone(); };
+      api.range   = function(from, to){ state.range = [from, to]; return clone(); };
+      api.single  = function(){ state.single = true; return clone(); };
+      api.maybeSingle = function(){ state.single = true; return clone(); };
+
+      function applyFilters(rows){
+        let out = rows.slice();
+        for (const f of filters) {
+          if (f.op === 'eq')  out = out.filter(function(r){ return r && r[f.col] == f.val; });
+          else if (f.op === 'neq') out = out.filter(function(r){ return r && r[f.col] != f.val; });
+          else if (f.op === 'gt')  out = out.filter(function(r){ return r && r[f.col] >  f.val; });
+          else if (f.op === 'gte') out = out.filter(function(r){ return r && r[f.col] >= f.val; });
+          else if (f.op === 'lt')  out = out.filter(function(r){ return r && r[f.col] <  f.val; });
+          else if (f.op === 'lte') out = out.filter(function(r){ return r && r[f.col] <= f.val; });
+          else if (f.op === 'like' || f.op === 'ilike') {
+            const pat = String(f.val).replace(/%/g,'.*').replace(/_/g,'.');
+            const re = new RegExp('^'+pat+'$', f.op === 'ilike' ? 'i' : '');
+            out = out.filter(function(r){ return r && re.test(String(r[f.col] ?? '')); });
+          } else if (f.op === 'in') {
+            out = out.filter(function(r){ return r && f.vals && f.vals.indexOf(r[f.col]) !== -1; });
+          }
+        }
+        if (state.order) {
+          const c = state.order.col, asc = state.order.asc;
+          out.sort(function(a,b){ const x=a&&a[c], y=b&&b[c]; if (x===y) return 0; return (x>y?1:-1) * (asc?1:-1); });
+        }
+        if (state.range) out = out.slice(state.range[0], state.range[1]+1);
+        if (state.limit != null) out = out.slice(0, state.limit);
+        return out;
+      }
+
+      // Each terminal operation returns a Thenable so awaiting the chain works.
+      function exec(method, body){
+        const url = '/api/data/' + encodeURIComponent(table);
+        return new Promise(function(resolve){
+          const opts = { method: method, headers: { 'Content-Type': 'application/json' } };
+          if (body !== undefined) opts.body = JSON.stringify(body);
+          fetch(url, opts).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, status: r.status, j: j }; }).catch(function(){ return { ok: r.ok, status: r.status, j: null }; }); })
+            .then(function(res){
+              if (!res.ok) return resolve({ data: null, error: { message: (res.j && res.j.error) || ('HTTP ' + res.status) }, status: res.status });
+              let data = res.j;
+              if (method === 'GET' && Array.isArray(data)) data = applyFilters(data);
+              if (state.single) data = (Array.isArray(data) ? data[0] : data) || null;
+              resolve({ data: data, error: null, status: res.status });
+            }).catch(function(e){ resolve({ data: null, error: { message: String(e && e.message || e) } }); });
+        });
+      }
+
+      // Make the chain itself awaitable (for SELECT after filters)
+      api.then = function(onF, onR){ return exec('GET').then(onF, onR); };
+
+      // INSERT
+      api.insert = function(values){
+        const payload = Array.isArray(values) ? values : [values];
+        const p = Promise.all(payload.map(function(v){ return exec('POST', v); }))
+          .then(function(results){
+            const errs = results.filter(function(r){ return r.error; });
+            if (errs.length) return { data: null, error: errs[0].error };
+            const data = results.map(function(r){ return r.data; });
+            return { data: state.single ? data[0] : data, error: null };
+          });
+        return Object.assign(p, { select: function(){ return p; }, single: function(){ state.single = true; return p; } });
+      };
+
+      // UPDATE
+      api.update = function(values){
+        const p = exec('GET').then(function(res){
+          if (res.error) return res;
+          const rows = Array.isArray(res.data) ? res.data : (res.data ? [res.data] : []);
+          if (!rows.length) return { data: state.single ? null : [], error: null };
+          return Promise.all(rows.map(function(r){
+            const id = r && (r.id || r._id);
+            if (!id) return { data: null, error: { message: 'row missing id' } };
+            return new Promise(function(resolve){
+              fetch('/api/data/' + encodeURIComponent(table) + '/' + encodeURIComponent(id), {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.assign({}, r, values)),
+              }).then(function(rr){ return rr.json().then(function(j){ return { ok: rr.ok, j: j }; }); })
+                .then(function(rr){ resolve(rr.ok ? { data: rr.j, error: null } : { data: null, error: { message: (rr.j && rr.j.error) || 'update failed' } }); })
+                .catch(function(e){ resolve({ data: null, error: { message: String(e) } }); });
+            });
+          })).then(function(results){
+            const errs = results.filter(function(r){ return r.error; });
+            if (errs.length) return { data: null, error: errs[0].error };
+            const data = results.map(function(r){ return r.data; });
+            return { data: state.single ? data[0] : data, error: null };
+          });
+        });
+        return Object.assign(p, { select: function(){ return p; }, single: function(){ state.single = true; return p; }, eq: api.eq });
+      };
+
+      // DELETE
+      api.delete = function(){
+        const p = exec('GET').then(function(res){
+          if (res.error) return res;
+          const rows = Array.isArray(res.data) ? res.data : (res.data ? [res.data] : []);
+          return Promise.all(rows.map(function(r){
+            const id = r && (r.id || r._id);
+            if (!id) return { ok: true };
+            return fetch('/api/data/' + encodeURIComponent(table) + '/' + encodeURIComponent(id), { method: 'DELETE' });
+          })).then(function(){ return { data: rows, error: null }; });
+        });
+        return Object.assign(p, { eq: api.eq });
+      };
+
+      api.upsert = api.insert;
+      return api;
+    }
+
+    function makeWeblyDataClient(){
+      const noopSub = { subscribe: function(){ return { unsubscribe: function(){} }; }, unsubscribe: function(){} };
+      const auth = {
+        getUser:    function(){ return Promise.resolve({ data: { user: null }, error: null }); },
+        getSession: function(){ return Promise.resolve({ data: { session: null }, error: null }); },
+        signInWithPassword: function(){ return Promise.resolve({ data: { user: null, session: null }, error: { message: 'auth not configured' } }); },
+        signUp:     function(){ return Promise.resolve({ data: { user: null, session: null }, error: { message: 'auth not configured' } }); },
+        signOut:    function(){ return Promise.resolve({ error: null }); },
+        onAuthStateChange: function(){ return { data: { subscription: { unsubscribe: function(){} } } }; },
+      };
+      const storage = {
+        from: function(){ return {
+          upload: function(){ return Promise.resolve({ data: null, error: { message: 'storage not configured' } }); },
+          getPublicUrl: function(p){ return { data: { publicUrl: '/api/data/_files/' + p } }; },
+          remove: function(){ return Promise.resolve({ data: null, error: null }); },
+        }; },
+      };
+      return {
+        from: function(table){ return buildQuery(table); },
+        auth: auth,
+        storage: storage,
+        channel: function(){ return { on: function(){ return this; }, subscribe: function(){ return noopSub; } }; },
+        removeChannel: function(){},
+        rpc: function(){ return Promise.resolve({ data: null, error: { message: 'rpc not available — use /api/data/*' } }); },
+      };
+    }
+
+    // Always expose a working client. Real Supabase is loaded lazily only if linked.
+    window.supabase = makeWeblyDataClient();
+    window.__WEBLY_DB_READY__ = true;
+    // Expose factory so app code that does createClient(url,key) still works.
+    window.__webly_createClient = function(){ return window.supabase; };
+  })();
+
+  // ───── Safety net: hide AI-generated "DB not configured" error banners ─────
+  // Uses MutationObserver to catch banners that appear AFTER user interaction
+  // (e.g. inside a submit handler), not just on initial load.
+  (function(){
+    const BLOCKED = [
+      'لم يتم تكوين قاعدة البيانات',
+      'يرجى ربط الخدمة',
+      'Supabase is not configured',
+      'Database not configured',
+      'لم يتم تكوين Supabase',
+    ];
+    function isBlocked(text){
+      if (!text) return false;
+      for (let i = 0; i < BLOCKED.length; i++) if (text.indexOf(BLOCKED[i]) !== -1) return true;
+      return false;
+    }
+    function scrubNode(node){
+      try {
+        if (!node || node.nodeType !== 1) return;
+        const text = node.innerText || node.textContent || '';
+        if (!isBlocked(text)) return;
+        // Walk up to find the smallest ancestor whose text is just the banner
+        let target = node;
+        let parent = node.parentElement;
+        while (parent && parent !== document.body) {
+          const ptext = (parent.innerText || parent.textContent || '').trim();
+          // If parent has roughly the same text (banner is its main content), keep climbing
+          if (ptext.length < text.length + 80 && isBlocked(ptext)) {
+            target = parent;
+            parent = parent.parentElement;
+          } else break;
+        }
+        // Replace banner with a friendly inline note instead of removing entirely
+        const note = document.createElement('div');
+        note.setAttribute('data-webly-replaced', '1');
+        note.style.cssText = 'padding:12px 16px;border-radius:12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);color:#c4b5fd;font-size:13px;text-align:center;margin:8px 0;font-family:Cairo,Inter,system-ui,sans-serif';
+        note.textContent = '✨ قاعدة البيانات الافتراضية مفعّلة — يمكنك المتابعة.';
+        target.parentNode && target.parentNode.replaceChild(note, target);
+      } catch(_) {}
+    }
+    function scrubAll(root){
+      try {
+        const r = root || document.body;
+        if (!r) return;
+        // Quick check: nothing to do if body text doesn't contain any banner
+        const bodyText = r.innerText || r.textContent || '';
+        if (!isBlocked(bodyText)) return;
+        // Find leaf-ish elements containing the text
+        const walker = document.createTreeWalker(r, NodeFilter.SHOW_ELEMENT, null);
+        const candidates = [];
+        let n = walker.nextNode();
+        while (n) {
+          if (n.getAttribute && n.getAttribute('data-webly-replaced')) { n = walker.nextNode(); continue; }
+          const t = n.innerText || n.textContent || '';
+          if (isBlocked(t) && t.length < 400) candidates.push(n);
+          n = walker.nextNode();
+        }
+        // Pick the deepest matches (smallest containers first)
+        candidates.sort(function(a,b){ return (b.children?b.children.length:0) - (a.children?a.children.length:0); });
+        for (let i = 0; i < candidates.length; i++) scrubNode(candidates[i]);
+      } catch(_) {}
+    }
+    function start(){
+      scrubAll();
+      try {
+        const obs = new MutationObserver(function(mutations){
+          for (let i = 0; i < mutations.length; i++) {
+            const m = mutations[i];
+            if (m.addedNodes && m.addedNodes.length) { scrubAll(); return; }
+            if (m.type === 'characterData') { scrubAll(); return; }
+          }
+        });
+        obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+      } catch(_) {}
+    }
+    if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(start, 300);
+    else window.addEventListener('DOMContentLoaded', function(){ setTimeout(start, 300); });
+  })();
+</script>
+
+<script>
+  // ───── In-browser module loader ─────
+  const FILES = {"/lib/theme.js":"'''export const ui = { card: \"rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-6 sm:p-8\", cardHover: \"transition-all hover:border-white/20 hover:bg-white/[0.04] hover:-translate-y-1\", btnPrimary: \"inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-6 py-3 font-semibold text-white shadow-[0_10px_40px_-10px_rgba(167,139,250,0.6)] hover:shadow-[0_10px_50px_-5px_rgba(167,139,250,0.8)] transition-all\", btnGhost: \"inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 font-medium text-white/90 hover:bg-white/[0.06] transition-all\", section: \"py-20 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8\", container: \"mx-auto max-w-7xl\", h1: \"text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight\", h2: \"text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight\", gradientText: \"bg-gradient-to-r from-violet-400 via-fuchsia-400 to-sky-400 bg-clip-text text-transparent\", }; '''))print(default_api.write_file(path=","/App.jsx":"import React from 'react';\nimport { Routes, Route } from 'react-router-dom';\nimport Navbar from './components/Navbar';\nimport Footer from './components/Footer';\nimport Home from './pages/Home';\nimport About from './pages/About';\nimport Projects from './pages/Projects';\nimport Store from './pages/Store';\nimport Cart from './pages/Cart';\nimport Auth from './pages/Auth';\nimport Account from './pages/Account';\nimport Support from './pages/Support';\nimport ResetPassword from './pages/ResetPassword';\nimport NotFound from './pages/NotFound';\n\nfunction App() {\n  return (\n    <div className=\"bg-bg text-text font-sans\">\n      <Navbar />\n      <main>\n        <Routes>\n          <Route path=\"/\" element={<Home />} />\n          <Route path=\"/about\" element={<About />} />\n          <Route path=\"/projects\" element={<Projects />} />\n          <Route path=\"/store\" element={<Store />} />\n          <Route path=\"/cart\" element={<Cart />} />\n          <Route path=\"/auth\" element={<Auth />} />\n          <Route path=\"/account\" element={<Account />} />\n          <Route path=\"/support\" element={<Support />} />\n          <Route path=\"/reset-password\" element={<ResetPassword />} />\n          <Route path=\"*\" element={<NotFound />} />\n        </Routes>\n      </main>\n      <Footer />\n    </div>\n  );\n}\n\nexport default App;\n","/main.jsx":"import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport { BrowserRouter } from 'react-router-dom';\nimport App from './App';\nimport './styles/tokens.css';\nimport './styles.css';\n\nReactDOM.createRoot(document.getElementById('root')).render(\n  <React.StrictMode>\n    <BrowserRouter>\n      <App />\n    </BrowserRouter>\n  </React.StrictMode>\n);\n","/styles/tokens.css":"","/styles.css":"@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Inter:wght@400;600;700&display=swap');\n\n@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nbody {\n  font-family: 'Inter', 'Cairo', sans-serif;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  direction: ltr; /* Default to LTR, can be overridden for specific parts */\n}\n\n[dir=\"rtl\"] body {\n    direction: rtl;\n}\n","/components/Navbar.jsx":"import React, { useState } from 'react';\nimport { Link, NavLink } from 'react-router-dom';\nimport { Menu, X, ShoppingCart, User } from 'lucide-react';\nimport { ui } from '../lib/theme';\n\nconst navLinks = [\n  { path: '/', label: 'Home' },\n  { path: '/about', label: 'About' },\n  { path: '/projects', label: 'Projects' },\n  { path: '/store', label: 'Store' },\n  { path: '/support', label: 'Support' },\n];\n\nconst Navbar = () => {\n  const [isOpen, setIsOpen] = useState(false);\n\n  const activeLinkClass = \"text-violet-400\";\n\n  return (\n    <header className=\"sticky top-0 z-50 glass\">\n      <div className={`${ui.container} flex items-center justify-between h-20`}>\n        <Link to=\"/\" className=\"flex items-center gap-2\">\n          <span className=\"text-xl font-bold tracking-tight\">Hamza Elgzairy</span>\n        </Link>\n\n        <nav className=\"hidden md:flex items-center gap-6\">\n          {navLinks.map(link => (\n            <NavLink key={link.path} to={link.path} className={({ isActive }) => \n              `font-medium text-white/80 hover:text-white transition-colors ${isActive ? activeLinkClass : ''}`\n            }>\n              {link.label}\n            </NavLink>\n          ))}\n        </nav>\n\n        <div className=\"flex items-center gap-4\">\n           <NavLink to=\"/cart\" className={({isActive}) => `relative text-white/80 hover:text-white ${isActive ? activeLinkClass : ''}`}>\n            <ShoppingCart size={22} />\n            {/* Add a badge for cart items count later */}\n          </NavLink>\n          <NavLink to=\"/account\" className={({isActive}) => `text-white/80 hover:text-white ${isActive ? activeLinkClass : ''}`}>\n            <User size={22} />\n          </NavLink>\n\n          <button \n            className=\"md:hidden text-white/80 hover:text-white\"\n            onClick={() => setIsOpen(!isOpen)}\n            aria-label=\"Toggle menu\"\n          >\n            {isOpen ? <X size={24} /> : <Menu size={24} />}\n          </button>\n        </div>\n      </div>\n      \n      {/* Mobile Menu */}\n      {isOpen && (\n        <div className=\"md:hidden absolute top-20 left-0 w-full bg-surface pb-6\">\n          <nav className=\"flex flex-col items-center gap-6 pt-6\">\n            {navLinks.map(link => (\n              <NavLink \n                key={link.path} \n                to={link.path} \n                onClick={() => setIsOpen(false)}\n                className={({ isActive }) => \n                  `text-lg font-medium text-white/80 hover:text-white transition-colors ${isActive ? activeLinkClass : ''}`\n                }\n              >\n                {link.label}\n              </NavLink>\n            ))}\n          </nav>\n        </div>\n      )}\n    </header>\n  );\n};\n\nexport default Navbar;\n","/components/Footer.jsx":"import React from 'react';\nimport { Link } from 'react-router-dom';\nimport { Github, Linkedin, Twitter } from 'lucide-react';\nimport { ui } from '../lib/theme';\n\nconst Footer = () => {\n  return (\n    <footer className=\"bg-surface-2 border-t border-border\">\n      <div className={`${ui.container} ${ui.section} !py-16 grid grid-cols-1 md:grid-cols-3 gap-12`}>\n        <div>\n          <h3 className=\"font-bold text-lg mb-4\">Hamza Hassan Elgzairy</h3>\n          <p className=\"text-text-muted max-w-xs\">\n            AI Engineer at Megsy AI, building the future of intelligent applications.\n          </p>\n          <div className=\"flex items-center gap-4 mt-6\">\n            <a href=\"#\" className=\"text-text-muted hover:text-white\"><Github size={20} /></a>\n            <a href=\"#\" className=\"text-text-muted hover:text-white\"><Linkedin size={20} /></a>\n            <a href=\"#\" className=\"text-text-muted hover:text-white\"><Twitter size={20} /></a>\n          </div>\n        </div>\n\n        <div>\n          <h3 className=\"font-bold text-lg mb-4\">Quick Links</h3>\n          <ul className=\"space-y-3\">\n            <li><Link to=\"/about\" className=\"text-text-muted hover:text-white\">About</Link></li>\n            <li><Link to=\"/projects\" className=\"text-text-muted hover:text-white\">Projects</Link></li>\n            <li><Link to=\"/store\" className=\"text-text-muted hover:text-white\">Store</Link></li>\n            <li><Link to=\"/support\" className=\"text-text-muted hover:text-white\">Support</Link></li>\n          </ul>\n        </div>\n\n        <div>\n          <h3 className=\"font-bold text-lg mb-4\">Newsletter</h3>\n          <p className=\"text-text-muted mb-4\">Get updates on new projects and products.</p>\n          <form className=\"flex gap-2\">\n            <input type=\"email\" placeholder=\"your.email@example.com\" className=\"bg-surface border border-border rounded-md px-4 py-2 w-full focus:ring-violet-500 focus:border-violet-500\" />\n            <button type=\"submit\" className={`${ui.btnPrimary} !px-4 !py-2`}>Subscribe</button>\n          </form>\n        </div>\n      </div>\n      <div className=\"bg-bg border-t border-border py-6\">\n        <p className={`${ui.container} text-center text-sm text-text-muted`}>\n          &copy; {new Date().getFullYear()} Hamza Hassan Elgzairy. All rights reserved.\n        </p>\n      </div>\n    </footer>\n  );\n};\n\nexport default Footer;\n","/pages/Home.jsx":"import React from 'react';\nimport { Link } from 'react-router-dom';\nimport { ArrowRight, BrainCircuit, Code, ShoppingBag } from 'lucide-react';\nimport { ui } from '../lib/theme';\nimport { motion } from 'framer-motion';\n\nconst stagger = (delay) => ({\n  hidden: { opacity: 0, y: 20 },\n  visible: { opacity: 1, y: 0, transition: { staggerChildren: delay || 0.1 } },\n});\n\nconst fadeIn = {\n  hidden: { opacity: 0, y: 20 },\n  visible: { opacity: 1, y: 0 },\n};\n\nconst Home = () => {\n  const heroImageUrl = \"https://images.pexels.com/photos/777001/pexels-photo-777001.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2\"; // Placeholder, will be replaced with the image from find_images\n\n  return (\n    <div className=\"overflow-hidden\">\n      {/* Hero Section */}\n      <motion.section \n        className={`${ui.section} relative min-h-screen flex items-center justify-center text-center`} \n        variants={stagger(0.2)} \n        initial=\"hidden\" \n        animate=\"visible\">\n        <div className=\"absolute inset-0 z-0\">\n          <img src=\"https://images.pexels.com/photos/1963075/pexels-photo-1963075.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2\" alt=\"Hero Background\" className=\"w-full h-full object-cover opacity-10\" />\n          <div className=\"absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-transparent\"></div>\n        </div>\n\n        <div className=\"relative z-10 flex flex-col items-center\">\n          <motion.div variants={fadeIn} className=\"w-32 h-32 md:w-40 md:h-40 rounded-full mb-6 border-4 border-violet-500/50 shadow-lg overflow-hidden\">\n            <img src={heroImageUrl} alt=\"Hamza Hassan Elgzairy\" className=\"w-full h-full object-cover\" />\n          </motion.div>\n          <motion.h1 variants={fadeIn} className={`${ui.h1} mb-4`}>\n            Hamza Hassan Elgzairy\n          </motion.h1>\n          <motion.p variants={fadeIn} className=\"text-xl md:text-2xl text-text-muted mb-8 max-w-2xl\">\n            AI Engineer @ <a href=\"https://megsy.ai\" target=\"_blank\" rel=\"noopener noreferrer\" className=\"font-semibold text-violet-400 hover:text-violet-300\">Megsy AI</a>, crafting intelligent systems that push the boundaries of technology.\n          </motion.p>\n          <motion.div variants={fadeIn} className=\"flex flex-wrap justify-center gap-4\">\n            <Link to=\"/projects\" className={ui.btnPrimary}>\n              View My Work <ArrowRight size={20} />\n            </Link>\n            <Link to=\"/about\" className={ui.btnGhost}>\n              More About Me\n            </Link>\n          </motion.div>\n        </div>\n      </motion.section>\n\n      {/* Features Section */}\n      <motion.section className={`${ui.section} bg-surface-2`} initial=\"hidden\" whileInView=\"visible\" viewport={{ once: true, amount: 0.3 }} variants={stagger()}>\n        <div className={ui.container}>\n          <div className=\"max-w-2xl mx-auto text-center mb-16\">\n            <motion.h2 variants={fadeIn} className={ui.h2}>What I Do</motion.h2>\n            <motion.p variants={fadeIn} className=\"mt-4 text-lg text-text-muted\">\n              I focus on creating robust, scalable, and impactful AI solutions. From developing complex models to building user-centric applications, my work spans the full spectrum of AI engineering.\n            </p>\n          </div>\n          <div className=\"grid grid-cols-1 md:grid-cols-3 gap-8\">\n            <motion.div variants={fadeIn} className={`${ui.card} text-center`}>\n              <div className=\"inline-block p-4 bg-violet-900/50 rounded-full mb-4\">\n                <BrainCircuit className=\"text-violet-400\" size={32} />\n              </div>\n              <h3 className=\"text-xl font-bold mb-2\">AI Model Development</h3>\n              <p className=\"text-text-muted\">Specializing in building and training custom machine learning and deep learning models for various applications, including NLP and computer vision. I have extensive experience with frameworks like TensorFlow and PyTorch.</p>\n            </motion.div>\n            <motion.div variants={fadeIn} className={`${ui.card} text-center`}>\n              <div className=\"inline-block p-4 bg-sky-900/50 rounded-full mb-4\">\n                <Code className=\"text-sky-400\" size={32} />\n              </div>\n              <h3 className=\"text-xl font-bold mb-2\">Full-Stack AI Integration</h3>\n              <p className=\"text-text-muted\">Bridging the gap between AI models and real-world applications. I design and implement full-stack systems, integrating AI functionalities into scalable web services and user-friendly interfaces using technologies like React and Node.js.</p>\n            </motion.div>\n            <motion.div variants={fadeIn} className={`${ui.card} text-center`}>\n              <div className=\"inline-block p-4 bg-fuchsia-900/50 rounded-full mb-4\">\n                <ShoppingBag className=\"text-fuchsia-400\" size={32} />\n              </div>\n              <h3 className=\"text-xl font-bold mb-2\">Digital Product Creation</h3>\n              <p className=\"text-text-muted\">Leveraging my expertise to create valuable digital assets for developers and AI enthusiasts. I develop high-quality AI prompt packs, comprehensive courses, and ready-to-use project templates to accelerate AI development.</p>\n            </motion.div>\n          </div>\n        </div>\n      </motion.section>\n    </div>\n  );\n};\n\nexport default Home;\n","/lib/supabase.js":"import { createClient } from '@supabase/supabase-js';\n\nconst supabaseUrl = window.__SUPABASE_URL__;\nconst supabaseAnonKey = window.__SUPABASE_ANON_KEY__;\n\nexport const supabase = createClient(supabaseUrl, supabaseAnonKey);\n","/pages/NotFound.jsx":"import React from 'react';\nimport { Link } from 'react-router-dom';\nimport { Frown } from 'lucide-react';\nimport { ui } from '../lib/theme';\n\nconst NotFound = () => {\n  return (\n    <div className={`${ui.section} ${ui.container} text-center flex flex-col items-center justify-center min-h-[60vh]`}>\n        <Frown className=\"w-24 h-24 text-violet-400 mb-6\" />\n      <h1 className={`${ui.h1} ${ui.gradientText} mb-4`}>404</h1>\n      <h2 className=\"text-3xl font-bold mb-4\">Page Not Found</h2>\n      <p className=\"text-text-muted text-lg mb-8 max-w-md\">\n        Oops! The page you're looking for doesn't exist. It might have been moved or deleted.\n      </p>\n      <Link to=\"/\" className={ui.btnPrimary}>\n        Go Back Home\n      </Link>\n    </div>\n  );\n};\n\nexport default NotFound;\n","/pages/Store.jsx":"import React, { useState, useEffect } from 'react';\nimport { ui } from '../lib/theme';\nimport DigitalProductCard from '../components/DigitalProductCard';\nimport {motion} from 'framer-motion';\n\nconst Store = () => {\n  const [products, setProducts] = useState([]);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    // In a real app, you'd fetch from /api/data/products\n    // For this static build, we'll fetch from the JSON file.\n    fetch('/data/products.json')\n      .then(res => res.json())\n      .then(data => {\n        setProducts(data);\n        setLoading(false);\n      })\n      .catch(err => {\n        console.error(\"Error fetching products:\", err);\n        setLoading(false);\n      });\n  }, []);\n\n  return (\n    <div className={`${ui.section} ${ui.container}`}>\n         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>\n            <div className=\"text-center max-w-3xl mx-auto\">\n                <h1 className={`${ui.h1} ${ui.gradientText} mb-4`}>Digital Store</h1>\n                <p className=\"text-lg sm:text-xl text-text-muted\">\n                    Accelerate your AI journey with my collection of high-quality digital products. From comprehensive courses to production-ready templates, these resources are designed to save you time and provide immense value.\n                </p>\n            </div>\n        </motion.div>\n\n      <div className=\"mt-16 sm:mt-20\">\n        {loading ? (\n          <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8\">\n            {[...Array(6)].map((_, i) => (\n              <div key={i} className={`${ui.card} animate-pulse`}>\n                <div className=\"bg-surface-2 h-48 w-full rounded-lg mb-4\"></div>\n                <div className=\"h-6 bg-surface-2 rounded w-3/4 mb-2\"></div>\n                <div className=\"h-4 bg-surface-2 rounded w-1/4\"></div>\n              </div>\n            ))}\n          </div>\n        ) : (\n          <motion.div \n             initial=\"hidden\"\n             animate=\"visible\"\n             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}\n             className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8\">\n            {products.map(product => (\n                 <motion.div key={product.name_en} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>\n                    <DigitalProductCard product={product} />\n                 </motion.div>\n            ))}\n          </motion.div>\n        )}\n      </div>\n    </div>\n  );\n};\n\nexport default Store;","/components/DigitalProductCard.jsx":"import React from 'react';\nimport { ShoppingCart } from 'lucide-react';\nimport { ui } from '../lib/theme';\n\nconst DigitalProductCard = ({ product }) => {\n  // In a real app, you would use a global state (like Zustand/Redux) to handle adding to cart.\n  const handleAddToCart = () => {\n    console.log(`Added ${product.name_en} to cart.`);\n    // useCartStore.getState().addItem(product);\n  };\n\n  return (\n    <div className={`${ui.card} ${ui.cardHover} flex flex-col h-full`}>\n      <div className=\"aspect-video w-full overflow-hidden rounded-lg mb-4\">\n        <img src={product.image_url} alt={product.name_en} className=\"w-full h-full object-cover\" />\n      </div>\n      <div className=\"flex-grow\">\n          <p className=\"text-sm text-violet-400 font-medium mb-1\">{product.category}</p>\n          <h3 className=\"text-lg font-bold mb-2\">{product.name_en}</h3>\n          <p className=\"text-text-muted text-sm flex-grow mb-4\">{product.description_en}</p>\n      </div>\n      <div className=\"flex items-center justify-between mt-4\">\n        <span className=\"text-2xl font-bold text-white\">${product.price.toFixed(2)}</span>\n        <button onClick={handleAddToCart} className={`${ui.btnGhost} !px-4 !py-2`}>\n          <ShoppingCart size={18} />\n          <span className=\"hidden sm:inline\">Add to Cart</span>\n        </button>\n      </div>\n    </div>\n  );\n};\n\nexport default DigitalProductCard;","/pages/About.jsx":"import React from 'react';\nimport { ui } from '../lib/theme';\nimport { motion } from 'framer-motion';\nimport { Briefcase, Cpu, Code, Zap, Target } from 'lucide-react';\n\nconst About = () => {\n  const aboutImageUrl = 'https://images.pexels.com/photos/33433724/pexels-photo-33433724.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940';\n\n  return (\n    <div className={`${ui.section} ${ui.container}`}>\n      <motion.div \n        initial={{ opacity: 0, y: 20 }}\n        animate={{ opacity: 1, y: 0 }}\n        transition={{ duration: 0.5 }}\n        className=\"text-center max-w-3xl mx-auto mb-16 sm:mb-24\"\n      >\n        <h1 className={`${ui.h1} ${ui.gradientText} mb-4`}>About Me</h1>\n        <p className=\"text-lg sm:text-xl text-text-muted\">\n          An AI Engineer driven by a passion for building intelligent, scalable, and impactful solutions that shape the future.\n        </p>\n      </motion.div>\n\n      <div className=\"grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-center\">\n        <motion.div \n          initial={{ opacity: 0, x: -50 }}\n          animate={{ opacity: 1, x: 0 }}\n          transition={{ duration: 0.7 }}\n          className=\"lg:col-span-2\"\n        >\n          <div className=\"aspect-square relative rounded-3xl overflow-hidden glass p-2\">\n             <img src={aboutImageUrl} alt=\"Hamza Hassan Elgzairy\" className=\"w-full h-full object-cover rounded-2xl\" />\n             <div className=\"absolute bottom-4 left-4 right-4 p-4 bg-black/50 backdrop-blur-md rounded-xl border border-white/10\">\n                <p className='font-bold text-lg'>Hamza H. Elgzairy</p>\n                <p className='text-sm text-violet-300'>AI Engineer @ Megsy AI</p>\n             </div>\n          </div>\n        </motion.div>\n        <motion.div \n          initial={{ opacity: 0, x: 50 }}\n          animate={{ opacity: 1, x: 0 }}\n          transition={{ duration: 0.7, delay: 0.2 }}\n          className=\"lg:col-span-3\"\n        >\n          <h2 className={`${ui.h2} mb-6`}>From Curiosity to Creation</h2>\n          <div className=\"space-y-6 text-text-muted text-lg leading-relaxed\">\n            <p>\n              My journey into the world of Artificial Intelligence began not in a classroom, but with a profound curiosity about how complex systems learn and adapt. This curiosity evolved into a dedicated career focused on the intersection of data, algorithms, and user experience. As an AI Engineer at <a href='https://megsy.ai' target='_blank' rel='noopener noreferrer' className='text-violet-400 font-semibold'>Megsy AI</a>, I am on the front lines, architecting and implementing the core intelligence that powers our next-generation platform.\n            </p>\n            <p>\n              I specialize in the full development lifecycle of AI systems—from conceptualization and data processing to model training, deployment, and integration into full-stack applications. My work is not just about writing code; it's about solving real-world problems and creating tangible value through technology.\n            </p>\n             <p>\n              I thrive in dynamic environments where innovation is constant. Whether it's fine-tuning a large language model, designing a scalable API for an AI service, or collaborating with a team to bring a complex feature to life, my goal is always to build products that are not only intelligent but also reliable and intuitive.\n            </p>\n          </div>\n        </motion.div>\n      </div>\n      \n      {/* Core Competencies Section */}\n    <div className=\"mt-24 sm:mt-32\">\n        <div className=\"text-center max-w-3xl mx-auto\">\n            <h2 className={`${ui.h2} mb-4`}>Core Competencies</h2>\n             <p className=\"text-lg text-text-muted\">\n             I leverage a diverse skill set to translate complex technical challenges into elegant solutions.\n            </p>\n        </div>\n        <div className=\"mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8\">\n            <div className={`${ui.card} text-center`}>\n                <Cpu size={32} className=\"mx-auto text-violet-400 mb-4\"/>\n                <h3 className='font-bold text-xl mb-2'>Machine Learning</h3>\n                <p className='text-text-muted text-sm'>Expert in Scikit-learn, TensorFlow, PyTorch. Experience with NLP, Computer Vision and predictive modeling.</p>\n            </div>\n            <div className={`${ui.card} text-center`}>\n                <Code size={32} className=\"mx-auto text-sky-400 mb-4\"/>\n                <h3 className='font-bold text-xl mb-2'>Backend Development</h3>\n                <p className='text-text-muted text-sm'>Building robust APIs and data pipelines using Python (FastAPI), Node.js, and integrating with databases like PostgreSQL and Supabase.</p>\n            </div>\n            <div className={`${ui.card} text-center`}>\n                <Zap size={32} className=\"mx-auto text-amber-400 mb-4\"/>\n                <h3 className='font-bold text-xl mb-2'>MLOps & Deployment</h3>\n                <p className='text-text-muted text-sm'>Proficient in containerization with Docker, CI/CD pipelines, and deploying scalable models on cloud platforms (AWS, GCP).</p>\n            </div>\n            <div className={`${ui.card} text-center`}>\n                <Target size={32} className=\"mx-auto text-fuchsia-400 mb-4\"/>\n                <h3 className='font-bold text-xl mb-2'>Product Strategy</h3>\n                <p className='text-text-muted text-sm'>Adept at aligning technical possibilities with business goals to deliver AI features that have a measurable market impact.</p>\n            </div>\n        </div>\n    </div>\n\n    </div>\n  );\n};\n\nexport default About;\n","/pages/Projects.jsx":"import React from 'react';\nimport { ui } from '../lib/theme';\nimport { ExternalLink, Github } from 'lucide-react';\n\nconst projects = [\n  {\n    title: \"Megsy AI Core\",\n    description: \"Developing the core AI architecture for Megsy, focusing on scalable model deployment and real-time processing.\",\n    tags: [\"Python\", \"PyTorch\", \"FastAPI\", \"Docker\"],\n    link: \"#\",\n    github: \"#\"\n  },\n  {\n    title: \"EcoSmart Predictor\",\n    description: \"An AI-powered system for predicting energy consumption in smart buildings, reducing waste by 25%.\",\n    tags: [\"TensorFlow\", \"Scikit-learn\", \"PostgreSQL\"],\n    link: \"#\",\n    github: \"#\"\n  },\n  {\n    title: \"VisionScan Pro\",\n    description: \"Advanced computer vision application for automated quality control in manufacturing lines.\",\n    tags: [\"OpenCV\", \"React\", \"Node.js\"],\n    link: \"#\",\n    github: \"#\"\n  }\n];\n\nconst Projects = () => {\n  return (\n    <div className={`${ui.section} ${ui.container}`}>\n      <div className=\"text-center max-w-3xl mx-auto mb-16\">\n        <h1 className={`${ui.h1} ${ui.gradientText} mb-4`}>Projects</h1>\n        <p className=\"text-lg text-text-muted\">A showcase of my recent work in AI engineering and full-stack development.</p>\n      </div>\n      <div className=\"grid grid-cols-1 md:grid-cols-2 gap-8\">\n        {projects.map((project, idx) => (\n          <div key={idx} className={ui.card}>\n            <h3 className=\"text-2xl font-bold mb-3\">{project.title}</h3>\n            <p className=\"text-text-muted mb-4\">{project.description}</p>\n            <div className=\"flex flex-wrap gap-2 mb-6\">\n              {project.tags.map(tag => (\n                <span key={tag} className=\"px-3 py-1 bg-white/5 rounded-full text-xs font-medium text-violet-400 border border-white/10\">\n                  {tag}\n                </span>\n              ))}\n            </div>\n            <div className=\"flex gap-4\">\n              <a href={project.link} className=\"text-white hover:text-violet-400 transition-colors\"><ExternalLink size={20} /></a>\n              <a href={project.github} className=\"text-white hover:text-violet-400 transition-colors\"><Github size={20} /></a>\n            </div>\n          </div>\n        ))}\n      </div>\n    </div>\n  );\n};\n\nexport default Projects;\n","/pages/Cart.jsx":"import React from 'react';\nimport { ui } from '../lib/theme';\nimport { ShoppingBasket, ArrowRight } from 'lucide-react';\nimport { Link } from 'react-router-dom';\n\nconst Cart = () => {\n  return (\n    <div className={`${ui.section} ${ui.container}`}>\n      <div className=\"max-w-2xl mx-auto text-center\">\n        <div className=\"inline-flex p-6 bg-white/5 rounded-full mb-6\">\n          <ShoppingBasket size={48} className=\"text-violet-400\" />\n        </div>\n        <h1 className={ui.h2}>Your Cart is Empty</h1>\n        <p className=\"text-text-muted mt-4 mb-8\">Explore our store to find high-quality AI assets and courses.</p>\n        <Link to=\"/store\" className={ui.btnPrimary}>\n          Browse Store <ArrowRight size={20} />\n        </Link>\n      </div>\n    </div>\n  );\n};\n\nexport default Cart;\n","/pages/Auth.jsx":"import React from 'react';\nimport { ui } from '../lib/theme';\n\nconst Auth = () => {\n  return (\n    <div className={`${ui.section} ${ui.container} flex items-center justify-center`}>\n      <div className={`${ui.card} w-full max-w-md`}>\n        <h2 className=\"text-2xl font-bold mb-6 text-center\">Sign In</h2>\n        <form className=\"space-y-4\">\n          <div>\n            <label className=\"block text-sm font-medium mb-2\">Email</label>\n            <input type=\"email\" className=\"w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-violet-500 outline-none\" placeholder=\"name@example.com\" />\n          </div>\n          <div>\n            <label className=\"block text-sm font-medium mb-2\">Password</label>\n            <input type=\"password\" className=\"w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-violet-500 outline-none\" placeholder=\"••••••••\" />\n          </div>\n          <button type=\"button\" className={`${ui.btnPrimary} w-full justify-center mt-4`}>\n            Continue\n          </button>\n        </form>\n      </div>\n    </div>\n  );\n};\n\nexport default Auth;\n","/pages/Account.jsx":"import React from 'react';\nimport { ui } from '../lib/theme';\nimport { User, Settings, Package, LogOut } from 'lucide-react';\n\nconst Account = () => {\n  return (\n    <div className={`${ui.section} ${ui.container}`}>\n      <div className=\"max-w-4xl mx-auto\">\n        <h1 className={`${ui.h2} mb-8`}>My Account</h1>\n        <div className=\"grid grid-cols-1 md:grid-cols-4 gap-8\">\n          <div className=\"md:col-span-1 space-y-2\">\n            <button className=\"flex items-center gap-3 w-full p-3 rounded-xl bg-white/5 text-violet-400\"><User size={20}/> Profile</button>\n            <button className=\"flex items-center gap-3 w-full p-3 rounded-xl hover:bg-white/5 transition-colors\"><Package size={20}/> Orders</button>\n            <button className=\"flex items-center gap-3 w-full p-3 rounded-xl hover:bg-white/5 transition-colors\"><Settings size={20}/> Settings</button>\n            <button className=\"flex items-center gap-3 w-full p-3 rounded-xl hover:bg-white/5 text-red-400 transition-colors mt-8\"><LogOut size={20}/> Logout</button>\n          </div>\n          <div className={`${ui.card} md:col-span-3`}>\n             <div className=\"flex items-center gap-4 mb-8\">\n                <div className=\"w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500\" />\n                <div>\n                  <h2 className=\"text-xl font-bold\">Hamza User</h2>\n                  <p className=\"text-text-muted\">user@example.com</p>\n                </div>\n             </div>\n             <p className=\"text-text-muted\">Account details and preferences will appear here.</p>\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default Account;\n","/pages/Support.jsx":"import React from 'react';\nimport { ui } from '../lib/theme';\nimport { Mail, MessageCircle, HelpCircle } from 'lucide-react';\n\nconst Support = () => {\n  return (\n    <div className={`${ui.section} ${ui.container}`}>\n      <div className=\"max-w-3xl mx-auto text-center mb-16\">\n        <h1 className={`${ui.h1} ${ui.gradientText} mb-4`}>Support Center</h1>\n        <p className=\"text-lg text-text-muted\">How can we help you today? Our team is here to support your AI journey.</p>\n      </div>\n      <div className=\"grid grid-cols-1 md:grid-cols-3 gap-8\">\n        <div className={`${ui.card} text-center`}>\n          <Mail size={32} className=\"mx-auto text-violet-400 mb-4\" />\n          <h3 className=\"font-bold mb-2\">Email Us</h3>\n          <p className=\"text-sm text-text-muted mb-4\">Reply within 24 hours</p>\n          <a href=\"mailto:support@megsy.ai\" className=\"text-violet-400 font-medium\">support@megsy.ai</a>\n        </div>\n        <div className={`${ui.card} text-center`}>\n          <MessageCircle size={32} className=\"mx-auto text-sky-400 mb-4\" />\n          <h3 className=\"font-bold mb-2\">Live Chat</h3>\n          <p className=\"text-sm text-text-muted mb-4\">Available Mon-Fri</p>\n          <button className=\"text-sky-400 font-medium underline\">Start Chat</button>\n        </div>\n        <div className={`${ui.card} text-center`}>\n          <HelpCircle size={32} className=\"mx-auto text-fuchsia-400 mb-4\" />\n          <h3 className=\"font-bold mb-2\">Help Docs</h3>\n          <p className=\"text-sm text-text-muted mb-4\">Browse tutorials</p>\n          <button className=\"text-fuchsia-400 font-medium underline\">View Docs</button>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default Support;\n","/pages/ResetPassword.jsx":"import React from 'react';\nimport { ui } from '../lib/theme';\n\nconst ResetPassword = () => {\n  return (\n    <div className={`${ui.section} ${ui.container} flex items-center justify-center`}>\n      <div className={`${ui.card} w-full max-w-md`}>\n        <h2 className=\"text-2xl font-bold mb-4 text-center\">Reset Password</h2>\n        <p className=\"text-text-muted text-center mb-6\">Enter your email and we'll send you a link to reset your password.</p>\n        <form className=\"space-y-4\">\n          <div>\n            <label className=\"block text-sm font-medium mb-2\">Email Address</label>\n            <input type=\"email\" className=\"w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-violet-500 outline-none\" placeholder=\"name@example.com\" />\n          </div>\n          <button type=\"button\" className={`${ui.btnPrimary} w-full justify-center mt-4`}>\n            Send Reset Link\n          </button>\n        </form>\n      </div>\n    </div>\n  );\n};\n\nexport default ResetPassword;\n"};
+  const ENTRY = "/main.jsx";
+  const moduleCache = Object.create(null);
+
+  function tryResolve(path) {
+    if (FILES[path] !== undefined) return path;
+    for (const ext of ['.jsx', '.tsx', '.js', '.ts', '.css']) {
+      if (FILES[path + ext] !== undefined) return path + ext;
+    }
+    for (const ext of ['.jsx', '.tsx', '.js', '.ts']) {
+      if (FILES[path + '/index' + ext] !== undefined) return path + '/index' + ext;
+    }
+    return null;
+  }
+
+  function resolvePath(from, spec) {
+    // External (bare) — handled via importmap
+    if (!spec.startsWith('.') && !spec.startsWith('/')) return null;
+    const base = from.replace(/[^/]+$/, '');
+    const raw = spec.startsWith('/') ? spec : (base + spec);
+    const segs = [];
+    for (const s of raw.split('/')) {
+      if (s === '' || s === '.') continue;
+      if (s === '..') segs.pop();
+      else segs.push(s);
+    }
+    return tryResolve('/' + segs.join('/'));
+  }
+
+  const NO_DEFAULT_EXTERNALS = new Set([
+    'react-dom/client', 'react-router-dom', 'lucide-react', 'framer-motion',
+    'recharts', 'date-fns', 'zustand', 'nanoid',
+  ]);
+
+  function noDefaultExternalImportPlugin(babel) {
+    const t = babel.types;
+    return { visitor: {
+      ImportDeclaration(path) {
+        const source = path.node.source.value;
+        if (!NO_DEFAULT_EXTERNALS.has(source)) return;
+        const defaultSpecs = path.node.specifiers.filter((s) =>
+          t.isImportDefaultSpecifier(s) || (t.isImportSpecifier(s) && s.imported && s.imported.name === 'default')
+        );
+        if (!defaultSpecs.length) return;
+        const rest = path.node.specifiers.filter((s) => !defaultSpecs.includes(s));
+        const namespaceImports = defaultSpecs.map((s) =>
+          t.importDeclaration([t.importNamespaceSpecifier(t.identifier(s.local.name))], t.stringLiteral(source))
+        );
+        if (rest.length) {
+          path.node.specifiers = rest;
+          path.insertBefore(namespaceImports);
+        } else {
+          path.replaceWithMultiple(namespaceImports);
+        }
+      },
+      ExportNamedDeclaration(path) {
+        const source = path.node.source && path.node.source.value;
+        if (!source || !NO_DEFAULT_EXTERNALS.has(source)) return;
+        const defaultSpecs = path.node.specifiers.filter((s) => s.local && s.local.name === 'default');
+        if (!defaultSpecs.length) return;
+        const rest = path.node.specifiers.filter((s) => !defaultSpecs.includes(s));
+        const replacements = [];
+        for (const spec of defaultSpecs) {
+          const uid = path.scope.generateUidIdentifierBasedOnNode(spec.exported);
+          replacements.push(t.importDeclaration([t.importNamespaceSpecifier(uid)], t.stringLiteral(source)));
+          replacements.push(t.exportNamedDeclaration(null, [t.exportSpecifier(uid, spec.exported)]));
+        }
+        if (rest.length) replacements.push(t.exportNamedDeclaration(null, rest, t.stringLiteral(source)));
+        path.replaceWithMultiple(replacements);
+      },
+    }};
+  }
+
+  function safeReactRouterPlugin(babel) {
+    const t = babel.types;
+    return { visitor: {
+      ImportDeclaration(path) {
+        if (path.node.source.value !== 'react-router-dom') return;
+        const browserRouter = path.node.specifiers.find((s) =>
+          t.isImportSpecifier(s) && s.imported && (s.imported.name || s.imported.value) === 'BrowserRouter'
+        );
+        if (!browserRouter) return;
+        const localName = browserRouter.local.name;
+        const base = path.scope.generateUidIdentifier(localName + 'Base');
+        const useCtx = path.scope.generateUidIdentifier('useInRouterContext');
+        const reactNs = path.scope.generateUidIdentifier('ReactRouterSafeReact');
+        const rest = path.node.specifiers.filter((s) => s !== browserRouter);
+        path.node.specifiers = [
+          t.importSpecifier(base, t.identifier('BrowserRouter')),
+          t.importSpecifier(useCtx, t.identifier('useInRouterContext')),
+          ...rest,
+        ];
+        path.insertBefore(t.importDeclaration([t.importNamespaceSpecifier(reactNs)], t.stringLiteral('react')));
+        path.insertAfter(t.variableDeclaration('const', [t.variableDeclarator(
+          t.identifier(localName),
+          t.functionExpression(null, [t.identifier('props')], t.blockStatement([
+            t.variableDeclaration('let', [t.variableDeclarator(t.identifier('inside'), t.booleanLiteral(false))]),
+            t.tryStatement(
+              t.blockStatement([t.expressionStatement(t.assignmentExpression('=', t.identifier('inside'), t.callExpression(useCtx, [])))]),
+              t.catchClause(t.identifier('_e'), t.blockStatement([])),
+            ),
+            t.ifStatement(t.identifier('inside'), t.returnStatement(t.memberExpression(t.identifier('props'), t.identifier('children')))),
+            t.returnStatement(t.callExpression(
+              t.memberExpression(reactNs, t.identifier('createElement')),
+              [base, t.identifier('props'), t.memberExpression(t.identifier('props'), t.identifier('children'))],
+            )),
+          ])),
+        )]));
+      },
+    }};
+  }
+
+  function localNamedImportFallbackPlugin(currentPath, helperName) {
+    return function(babel) {
+      const t = babel.types;
+      const isLocal = function(source) { return typeof source === 'string' && !!resolvePath(currentPath, source); };
+      const pickCall = function(ns, importedName) {
+        return t.callExpression(t.identifier(helperName), [ns, t.stringLiteral(importedName)]);
+      };
+      return { visitor: {
+        ImportDeclaration(path) {
+          const source = path.node.source.value;
+          if (!isLocal(source) || path.node.importKind === 'type') return;
+          const named = path.node.specifiers.filter((s) => t.isImportSpecifier(s) && s.importKind !== 'type');
+          if (!named.length) return;
+          const keep = path.node.specifiers.filter((s) => !named.includes(s));
+          const ns = path.scope.generateUidIdentifier('webly_mod');
+          const replacements = [t.importDeclaration([t.importNamespaceSpecifier(ns)], t.stringLiteral(source))];
+          if (keep.length) replacements.push(t.importDeclaration(keep, t.stringLiteral(source)));
+          for (const spec of named) {
+            const imported = spec.imported && (spec.imported.name || spec.imported.value);
+            if (!imported) continue;
+            replacements.push(t.variableDeclaration('const', [
+              t.variableDeclarator(spec.local, pickCall(ns, imported)),
+            ]));
+          }
+          path.replaceWithMultiple(replacements);
+        },
+        ExportNamedDeclaration(path) {
+          const source = path.node.source && path.node.source.value;
+          if (!source || !isLocal(source) || !path.node.specifiers.length) return;
+          const ns = path.scope.generateUidIdentifier('webly_reexport');
+          const replacements = [t.importDeclaration([t.importNamespaceSpecifier(ns)], t.stringLiteral(source))];
+          const exportSpecs = [];
+          for (const spec of path.node.specifiers) {
+            const imported = spec.local && (spec.local.name || spec.local.value);
+            if (!imported) continue;
+            const local = path.scope.generateUidIdentifierBasedOnNode(spec.exported);
+            replacements.push(t.variableDeclaration('const', [
+              t.variableDeclarator(local, pickCall(ns, imported)),
+            ]));
+            exportSpecs.push(t.exportSpecifier(local, spec.exported));
+          }
+          if (exportSpecs.length) replacements.push(t.exportNamedDeclaration(null, exportSpecs));
+          path.replaceWithMultiple(replacements);
+        },
+      }};
+    };
+  }
+
+  function transformJs(code, path) {
+    const presets = [['react', { runtime: 'classic' }]];
+    if (/\.tsx?$/.test(path)) presets.push(['typescript', { allExtensions: true, isTSX: true }]);
+    const helperName = '__webly_pick_' + Math.random().toString(36).slice(2, 8);
+    const transformed = Babel.transform(code, {
+      presets,
+      plugins: [noDefaultExternalImportPlugin, safeReactRouterPlugin, localNamedImportFallbackPlugin(path, helperName)],
+      filename: path,
+      sourceType: 'module',
+    }).code;
+    return [
+      'const ' + helperName + '_noop = function(){};',
+      'const ' + helperName + '_wrapHook = function(fn){',
+      '  if (typeof fn !== "function") return fn;',
+      '  return function(){',
+      '    try {',
+      '      const r = fn.apply(this, arguments);',
+      '      if (r === undefined || r === null) return ' + helperName + '_noop;',
+      '      if (typeof r === "object") {',
+      '        return new Proxy(r, { get: function(t, k){ const v = t[k]; return v === undefined ? ' + helperName + '_noop : v; } });',
+      '      }',
+      '      return r;',
+      '    } catch (_e) { return ' + helperName + '_noop; }',
+      '  };',
+      '};',
+      'const ' + helperName + ' = function(mod, name){',
+      '  if (mod && Object.prototype.hasOwnProperty.call(mod, name) && mod[name] !== undefined) return mod[name];',
+      '  if (mod && name in Object(mod) && mod[name] !== undefined) return mod[name];',
+      '  const d = mod && mod.default;',
+      '  if (d && (typeof d === "object" || typeof d === "function") && name in Object(d) && d[name] !== undefined) return d[name];',
+      // Last-resort fallback: if default is callable (likely a hook), wrap it so missing selector results become safe.
+      '  if (typeof d === "function") return ' + helperName + '_wrapHook(d);',
+      '  if (d !== undefined && d !== null) return d;',
+      '  return undefined;',
+      '};',
+      transformed,
+    ].join('\n');
+  }
+
+  function hasDirectNamedExport(code, exportName, path) {
+    let found = false;
+    try {
+      Babel.transform(code, {
+        filename: path,
+        sourceType: 'module',
+        plugins: [function(babel){
+          const t = babel.types;
+          return { visitor: {
+            ExportNamedDeclaration(p) {
+              const node = p.node;
+              if (node.declaration) {
+                const decl = node.declaration;
+                if ((t.isFunctionDeclaration(decl) || t.isClassDeclaration(decl)) && decl.id && decl.id.name === exportName) found = true;
+                if (t.isVariableDeclaration(decl)) {
+                  for (const d of decl.declarations) if (t.isIdentifier(d.id) && d.id.name === exportName) found = true;
+                }
+              }
+              for (const s of node.specifiers || []) {
+                const exported = s.exported && (s.exported.name || s.exported.value);
+                if (exported === exportName) found = true;
+              }
+            },
+          }};
+        }],
+      });
+    } catch (_) {
+      return code.indexOf('export') !== -1 && code.indexOf(exportName) !== -1;
+    }
+    return found;
+  }
+
+  // CSS imports → JS module that injects a <style> tag and exports {}
+  function makeCssModule(cssText, path) {
+    const safe = JSON.stringify(cssText);
+    return [
+      "const __css = " + safe + ";",
+      "const __style = document.createElement('style');",
+      "__style.setAttribute('data-webly-css', " + JSON.stringify(path) + ");",
+      "__style.textContent = __css;",
+      "document.head.appendChild(__style);",
+      "export default __css;",
+    ].join('\n');
+  }
+
+  // Match import / export-from / dynamic import statements (handles single + double quotes)
+  const IMPORT_RE = /(\bimport\s+(?:[\w*\s{},$]+\s+from\s+)?|\bexport\s+\*\s+from\s+|\bexport\s+\{[^}]*\}\s+from\s+|\bimport\s*\(\s*)(["'])([^"']+)(\2)/g;
+
+  // Pull named bindings out of an import/export-from prefix like 'import Foo, { a, b as c } from '
+  function extractNamedBindings(prefix) {
+    const out = [];
+    const braceMatch = prefix && prefix.match(/\{([^}]*)\}/);
+    if (braceMatch) {
+      for (const part of braceMatch[1].split(',')) {
+        const seg = part.trim();
+        if (!seg) continue;
+        const name = seg.split(/\s+as\s+/i)[0].trim();
+        if (name && name !== 'default' && /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name)) out.push(name);
+      }
+    }
+    return out;
+  }
+
+  // Track which named bindings each local module must expose so we can
+  // backfill missing ones from the default export instead of crashing.
+  const requiredExports = Object.create(null);
+  function noteRequired(modulePath, names) {
+    if (!names.length) return;
+    if (!requiredExports[modulePath]) requiredExports[modulePath] = new Set();
+    for (const n of names) requiredExports[modulePath].add(n);
+  }
+
+  async function loadModule(path) {
+    if (moduleCache[path]) return moduleCache[path];
+    const src = FILES[path];
+    if (src === undefined) throw new Error('Module not found: ' + path);
+
+    let code;
+    if (path.endsWith('.css')) {
+      code = makeCssModule(src, path);
+    } else {
+      code = transformJs(src, path);
+
+      // Find every relative dep and pre-load it (also note named bindings consumers want)
+      const deps = [];
+      let m;
+      const re = new RegExp(IMPORT_RE.source, 'g');
+      while ((m = re.exec(code)) !== null) {
+        const prefix = m[1];
+        const spec = m[3];
+        const resolved = resolvePath(path, spec);
+        if (resolved) {
+          deps.push({ spec, resolved });
+          noteRequired(resolved, extractNamedBindings(prefix));
+        }
+      }
+      const depUrls = {};
+      for (const d of deps) {
+        depUrls[d.spec] = await loadModule(d.resolved);
+      }
+      const re2 = new RegExp(IMPORT_RE.source, 'g');
+      code = code.replace(re2, function(_full, prefix, q, spec, q2){
+        if (depUrls[spec]) return prefix + q + depUrls[spec] + q2;
+        return _full;
+      });
+
+      // Shim 1: ensure a default export exists so 'import X from "./mod"' never fails.
+      const hasDefault = /export\s+default\b/.test(code)
+        || /export\s*\{[^}]*\bdefault\b[^}]*\}/.test(code)
+        || /export\s*\{[^}]*\bas\s+default\b[^}]*\}/.test(code);
+      if (!hasDefault) {
+        code += "\n;export default {};\n";
+      }
+
+      // Named local imports are converted to namespace imports above, so we no
+      // longer mutate a module's export table here. Mutating exports caused hard
+      // browser syntax errors like "Duplicate export of 'seedProducts'".
+    }
+
+    const blob = new Blob([code], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    moduleCache[path] = url;
+    return url;
+  }
+
+  // Pre-pass: scan every file's raw source so that requiredExports is fully
+  // populated BEFORE any module is transformed/cached. Without this, a module
+  // loaded earlier than one of its consumers wouldn't get the backfill.
+  function prescanRequiredExports() {
+    for (const filePath of Object.keys(FILES)) {
+      if (!/\.(jsx?|tsx?)$/.test(filePath)) continue;
+      const code = FILES[filePath];
+      const re = new RegExp(IMPORT_RE.source, 'g');
+      let m;
+      while ((m = re.exec(code)) !== null) {
+        const prefix = m[1];
+        const spec = m[3];
+        const resolved = resolvePath(filePath, spec);
+        if (resolved) noteRequired(resolved, extractNamedBindings(prefix));
+      }
+    }
+  }
+
+  (async () => {
+    try {
+      prescanRequiredExports();
+      const entryUrl = await loadModule(ENTRY);
+      await import(entryUrl);
+    } catch (err) {
+      console.error('[Webly]', err);
+      const msg = (err && err.stack) ? err.stack : String(err);
+      document.getElementById('root').innerHTML =
+        '<div style="padding:24px;font-family:ui-monospace,monospace;direction:ltr;text-align:left;min-height:100vh;background:#0f172a">' +
+        '<h2 style="color:#f87171;margin:0 0 12px">Webly Runtime Error</h2>' +
+        '<pre style="white-space:pre-wrap;color:#fecaca;background:#1e293b;padding:16px;border-radius:8px;border:1px solid #b91c1c;font-size:13px">' +
+        msg.replace(/[&<>]/g, function(c){ return ({ '&':'&amp;','<':'&lt;','>':'&gt;' })[c]; }) +
+        '</pre></div>';
+    }
+  })();
+</script>
+</body>
+</html>
