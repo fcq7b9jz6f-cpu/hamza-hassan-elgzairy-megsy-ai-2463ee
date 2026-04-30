@@ -7,13 +7,9 @@
 هذا الملف يستخدمه Webly كذاكرة طويلة الأمد للمشروع. لا تحذفه.
 
 ### الملفات
-- `/lib/theme.js`
-- `/App.jsx`
 - `/main.jsx`
 - `/styles/tokens.css`
 - `/styles.css`
-- `/components/Navbar.jsx`
-- `/components/Footer.jsx`
 - `/pages/Home.jsx`
 - `/lib/supabase.js`
 - `/pages/NotFound.jsx`
@@ -21,12 +17,21 @@
 - `/pages/Store.jsx`
 - `/components/DigitalProductCard.jsx`
 - `/pages/About.jsx`
+- `pages/ResetPassword.jsx`
 - `pages/Projects.jsx`
 - `pages/Cart.jsx`
 - `pages/Auth.jsx`
 - `pages/Account.jsx`
 - `pages/Support.jsx`
-- `pages/ResetPassword.jsx`
+- `/lib/theme.js`
+- `/App.jsx`
+- `/components/Navbar.jsx`
+- `/pages/Support.jsx`
+- `/pages/Cart.jsx`
+- `/pages/Auth.jsx`
+- `/pages/Projects.jsx`
+- `/components/Footer.jsx`
+- `/pages/Account.jsx`
 
 ### النشر
 - البناء: ملفات HTML/JS ثابتة

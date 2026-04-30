@@ -1,57 +1,81 @@
-import React from 'react';
-import { ui } from '../lib/theme';
-import { ExternalLink, Github } from 'lucide-react';
-
-const projects = [
-  {
-    title: "Megsy AI Core",
-    description: "Developing the core AI architecture for Megsy, focusing on scalable model deployment and real-time processing.",
-    tags: ["Python", "PyTorch", "FastAPI", "Docker"],
-    link: "#",
-    github: "#"
-  },
-  {
-    title: "EcoSmart Predictor",
-    description: "An AI-powered system for predicting energy consumption in smart buildings, reducing waste by 25%.",
-    tags: ["TensorFlow", "Scikit-learn", "PostgreSQL"],
-    link: "#",
-    github: "#"
-  },
-  {
-    title: "VisionScan Pro",
-    description: "Advanced computer vision application for automated quality control in manufacturing lines.",
-    tags: ["OpenCV", "React", "Node.js"],
-    link: "#",
-    github: "#"
-  }
-];
+import React from "react";
+import { ui } from "../lib/theme";
+import { Link } from "react-router-dom";
+import { Code, Server, Smartphone, Globe, ArrowRight, Layout } from "lucide-react";
 
 const Projects = () => {
+  const projects = [
+    {
+      title: "Megsy AI - Voice Agent",
+      desc: "نظام ذكاء اصطناعي صوتي يتحدث العربية بطلاقة، مصمم لخدمة العملاء في الشركات الكبرى. يعتمد على نماذج OpenAI Whisper و ElevenLabs.",
+      tags: ["Python", "WebSocket", "React", "AI"],
+      image: "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=800",
+      link: "#"
+    },
+    {
+      title: "Smart Vision Dashboard",
+      desc: "لوحة تحكم ذكية تستخدم رؤية الحاسوب (Computer Vision) لتحليل حركة المرور وسلوك المشاة في المدن الذكية بشكل لحظي.",
+      tags: ["TensorFlow", "FastAPI", "Next.js"],
+      image: "https://images.pexels.com/photos/11035481/pexels-photo-11035481.jpeg?auto=compress&cs=tinysrgb&w=800",
+      link: "#"
+    },
+    {
+      title: "GPT-Powered CMS",
+      desc: "نظام إدارة محتوى يقوم بكتابة وتنسيق وجدولة المقالات تلقائياً بناءً على الكلمات المفتاحية الرائجة باستخدام GPT-4.",
+      tags: ["Node.js", "GPT-4", "Tailwind"],
+      image: "https://images.pexels.com/photos/1139457/pexels-photo-1139457.jpeg?auto=compress&cs=tinysrgb&w=800",
+      link: "#"
+    }
+  ];
+
   return (
-    <div className={`${ui.section} ${ui.container}`}>
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className={`${ui.h1} ${ui.gradientText} mb-4`}>Projects</h1>
-        <p className="text-lg text-text-muted">A showcase of my recent work in AI engineering and full-stack development.</p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {projects.map((project, idx) => (
-          <div key={idx} className={ui.card}>
-            <h3 className="text-2xl font-bold mb-3">{project.title}</h3>
-            <p className="text-text-muted mb-4">{project.description}</p>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {project.tags.map(tag => (
-                <span key={tag} className="px-3 py-1 bg-white/5 rounded-full text-xs font-medium text-violet-400 border border-white/10">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="flex gap-4">
-              <a href={project.link} className="text-white hover:text-violet-400 transition-colors"><ExternalLink size={20} /></a>
-              <a href={project.github} className="text-white hover:text-violet-400 transition-colors"><Github size={20} /></a>
-            </div>
+    <div className="pt-24 min-h-screen">
+      <section className={ui.section}>
+        <div className={ui.container}>
+          <div className="max-w-3xl mb-20 text-center mx-auto">
+            <h1 className={ui.h1 + " mb-8"}>مشاريع <br/><span className={ui.gradientText}>تم إنشاؤها بالذكاء</span></h1>
+            <p className="text-xl text-gray-400">
+              مزيج من الابتكار التقني والتصميم الفائق. كل مشروع هنا هو محاولة لدفع حدود الممكن باستخدام الأدوات الحديثة.
+            </p>
           </div>
-        ))}
-      </div>
+
+          <div className="grid gap-16">
+            {projects.map((p, idx) => (
+              <div key={idx} className={`${ui.card} grid md:grid-cols-2 gap-12 group overflow-hidden items-center`}>
+                <div className={`overflow-hidden rounded-3xl ${idx % 2 === 0 ? "md:order-1" : "md:order-2"}`}>
+                   <img 
+                    src={p.image} 
+                    alt={p.title} 
+                    className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-700"
+                   />
+                </div>
+                <div className={idx % 2 === 0 ? "md:order-2" : "md:order-1"}>
+                   <div className="flex gap-2 mb-6">
+                      {p.tags.map(tag => <span key={tag} className={ui.badge}>{tag}</span>)}
+                   </div>
+                   <h2 className={ui.h2}>{p.title}</h2>
+                   <p className="text-gray-400 text-lg leading-relaxed mb-8">{p.desc}</p>
+                   <Link to={p.link} className={ui.btnGhost}>
+                      عرض المشروع
+                      <ArrowRight size={20} className="mr-2 rotate-180" />
+                   </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tech Stack Marquee (Static) */}
+      <section className="py-20 border-y border-white/5 bg-zinc-950/30 overflow-hidden">
+        <div className="flex gap-20 items-center justify-center grayscale opacity-30 animate-pulse">
+            <div className="flex items-center gap-4 text-3xl font-bold"><Code size={32}/> REACT</div>
+            <div className="flex items-center gap-4 text-3xl font-bold"><Server size={32}/> PYTORCH</div>
+            <div className="flex items-center gap-4 text-3xl font-bold"><Globe size={32}/> FASTAPI</div>
+            <div className="flex items-center gap-4 text-3xl font-bold"><Smartphone size={32}/> TAILWIND</div>
+            <div className="flex items-center gap-4 text-3xl font-bold"><Layout size={32}/> SUPABASE</div>
+        </div>
+      </section>
     </div>
   );
 };
